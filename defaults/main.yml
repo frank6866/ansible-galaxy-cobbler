@@ -1,2 +1,6 @@
 ---
-# defaults file for .
+# defaults file for cobbler
+
+# /etc/cobbler/setting
+cobbler_manage_dhcp: 1
+cobbler_default_password: to@change

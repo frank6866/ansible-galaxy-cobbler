@@ -1,10 +1,13 @@
 ---
 # task file for installing and configuring cobbler on CentOS
 
+- name: install epel repo
+  yum: name=epel-release state=present
+  become: true
+
 - name: install related packages
   yum: name={{ item }} state=present
   with_items:
-    - epel
     - dhcp
     - xinetd
     - tftp
@@ -13,17 +16,26 @@
     - pykickstart
     - httpd
     - fence-agents
+  become: true
 
-- name: dhcpd configuration file
-  template: src=dhcpd.conf dest=/etc/dhcp/dhcpd.conf
+- name: generate crypted password
+  shell: openssl passwd -1 {{ cobbler_default_password }}
+  register: cobbler_default_password_crypted
 
+- name: template /etc/cobbler/settings
+  template: src=etc/cobbler/settings.j2 dest=/etc/cobbler/settings
+  become: true
 
-- name: start and enable service
-  service: name={{ item }} state=started enabled=yes
-  with_items::
-    - dhcpd
-    - xinetd
-    - httpd
-    - cobblerd
+#- name: dhcpd configuration file
+#  template: src=dhcpd.conf dest=/etc/dhcp/dhcpd.conf
+#
+
+#- name: start and enable service
+#  service: name={{ item }} state=started enabled=yes
+#  with_items::
+#    - dhcpd
+#    - xinetd
+#    - httpd
+#    - cobblerd
 
 

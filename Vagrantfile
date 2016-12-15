@@ -26,7 +26,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
             ansible.groups = {
                 "cobbler" => ["vagrant[1:2]"],
-                "cobbler:vars" => {"key1" => "value1", "key1" => "value1"}
+                "cobbler:vars" => {"key1" => "value1"}
             }
 
         end
