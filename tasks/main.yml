@@ -1,0 +1,12 @@
+---
+# tasks file for cobbler
+
+- name: install and config cobbler on CentOS/RHEL
+  include: centos.yml
+  when: ansible_os_family == "RedHat" or ansible_os_family == "CentOS"
+
+- name: install and config cobbler on
+  include: ubuntu.yml
+  when: ansible_os_family == "Debian"
+
+
