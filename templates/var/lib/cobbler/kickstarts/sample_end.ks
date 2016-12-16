@@ -35,8 +35,7 @@ selinux --disabled
 # Do not configure the X Window System
 skipx
 # System timezone
-# timezone  America/New_York
-timezone  {{ default_time_zone }}
+timezone  {{ cobbler_default_time_zone }}
 # Install OS instead of upgrade
 install
 # Clear the Master Boot Record

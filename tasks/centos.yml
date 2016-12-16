@@ -1,22 +1,25 @@
 ---
 # task file for installing and configuring cobbler on CentOS
 
+- name: "disable selinux "
+  lineinfile: dest=/etc/selinux/config regexp="^SELINUX=" line="SELINUX=disabled"
+
+- name: "stop selinux"
+  selinux: state=disabled
+
 - name: install epel repo
   yum: name=epel-release state=present
-  become: true
 
 - name: install related packages
   yum: name={{ item }} state=present
   with_items:
+    - cobbler  # cobbler depends on PyYAML, createrepo, httpd, mod_wsgi, rsync, tftp-server and so on.
     - dhcp
-    - xinetd
-    - tftp
-    - tftp-server
-    - cobbler
     - pykickstart
-    - httpd
-    - fence-agents
-  become: true
+
+- name: install cobbler-web
+  yum: name=cobbler-web state=present
+  when: cobbler_install_web is defined and cobbler_install_web
 
 - name: generate crypted password
   shell: openssl passwd -1 {{ cobbler_default_password }}
@@ -24,18 +27,49 @@
 
 - name: template /etc/cobbler/settings
   template: src=etc/cobbler/settings.j2 dest=/etc/cobbler/settings
-  become: true
+  notify: restart cobblerd
 
-#- name: dhcpd configuration file
-#  template: src=dhcpd.conf dest=/etc/dhcp/dhcpd.conf
-#
+- name: template /var/lib/cobbler/kickstarts/default.ks
+  template: src=var/lib/cobbler/kickstarts/sample_end.ks dest=/var/lib/cobbler/kickstarts/default.ks
 
-#- name: start and enable service
-#  service: name={{ item }} state=started enabled=yes
-#  with_items::
-#    - dhcpd
-#    - xinetd
-#    - httpd
-#    - cobblerd
+- name: template /var/lib/cobbler/kickstarts/sample_end.ks
+  template: src=var/lib/cobbler/kickstarts/sample_end.ks dest=/var/lib/cobbler/kickstarts/sample_end.ks
 
+- name: template /etc/cobbler/dhcp.template
+  template: src=etc/cobbler/dhcp.template.j2 dest=/etc/cobbler/dhcp.template
 
+- name: change 'disable' to 'no' in /etc/xinetd.d/tftp
+  lineinfile: dest=/etc/xinetd.d/tftp regexp="disable" line="disable = no"
+  # notify: restart xinetd
+
+- name: start and enable service
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - rsyncd
+    - tftp
+    - httpd
+    - cobblerd
+
+- name: cobbler get-loaders
+  shell: cobbler get-loaders
+
+#--------------
+# import distros
+#--------------
+- name: mount device or iso to mount point
+  mount: name=/mnt/{{ item.value.distro_name }}
+         src={{ item.value.device_or_iso_path }}
+         opts=ro fstype=iso9660 state=mounted
+  with_dict: "{{ cobbler_distros | default({})}}"
+  when: cobbler_distros is defined
+
+- name: import to distro to cobbler
+  shell: cobbler import --name={{ item.value.distro_name }}
+         --arch={{ item.value.arch }}
+         --path=/mnt/{{ item.value.distro_name }}
+  when: cobbler_distros is defined
+  with_dict: "{{ cobbler_distros | default({})}}"
+  ignore_errors: true
+
+- name: cobbler sync
+  shell: cobbler sync

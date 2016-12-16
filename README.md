@@ -1,38 +1,55 @@
-Role Name
-=========
+Cobbler
+=======
 
-A brief description of the role goes here.
+Install cobbler.
 
-Requirements
-------------
-
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+```
+cobbler_default_time_zone: "Asia/Shanghai"   # America/New_York
 
-Dependencies
-------------
+# /etc/cobbler/settings
+cobbler_manage_dhcp: 1 # default
+cobbler_default_password: to@change # default
+cobbler_server: 192.168.168.202
+cobbler_next_server: 192.168.168.202
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+
+# /etc/cobbler/dhcp.template
+cobbler_subnet: 192.168.168.0
+cobbler_netmask: 255.255.255.0
+cobbler_dynamic_bootp_start: 192.168.168.128
+cobbler_dynamic_bootp_end: 192.168.168.172
+
+cobbler_routers: 192.168.168.1
+cobbler_domain_name_servers: 192.168.168.1
+cobbler_subnet_mask: 255.255.255.0
+
+# option
+cobbler_distros:
+  CentOS-7.1-minimal:
+    distro_name: CentOS-7.1
+    device_or_iso_path: /dev/sr0  # /data/CentOS-7-x86_64-DVD-1503-01.iso
+    arch: x86_64
+
+# option
+cobbler_install_web: true
+```
+
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
+```
     - hosts: servers
+      become: true
       roles:
-         - { role: username.rolename, x: 42 }
+         - { role: frank6866.cobbler }
+```
 
 License
 -------
 
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+MIT

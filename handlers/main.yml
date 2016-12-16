@@ -1,2 +1,5 @@
 ---
-# handlers file for .
+# handlers file for cobbler
+
+- name: restart cobblerd
+  service: name=cobblerd state=restarted

@@ -8,5 +8,3 @@
 - name: install and config cobbler on
   include: ubuntu.yml
   when: ansible_os_family == "Debian"
-
-
