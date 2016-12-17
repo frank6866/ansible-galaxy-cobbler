@@ -3,6 +3,21 @@ Cobbler
 
 Install cobbler.
 
+TODO
+----
+
+公钥
+软件包
+ntp
+dns
+ssh,selinux
+
+## static ip
+input ip,netmask,gateway,dns;associate with mac addr not the interface name
+
+根据默认网关获得默认网卡,设置它的ip地址
+
+
 
 Role Variables
 --------------

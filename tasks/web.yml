@@ -1,0 +1,20 @@
+---
+# task file for installing cobbler-web
+
+- name: install cobbler-web
+  yum: name=cobbler-web state=present
+
+- name: copy /etc/cobbler/modules.conf
+  copy: src=etc/cobbler/modules.conf dest=/etc/cobbler/modules.conf mode=644
+
+- name: copy /etc/httpd/conf.d/cobbler_web.conf
+  copy: src=etc/httpd/conf.d/cobbler_web.conf dest=/etc/httpd/conf.d/cobbler_web.conf mode=644
+  notify: restart httpd
+
+- name: get hash of user
+  shell: echo -n "{{ item.user_name }}:Cobbler:" && echo -n "{{ item.user_name }}:Cobbler:{{ item.password }}" | md5sum | awk '{print $1}'
+  with_items: "{{ cobbler_web_user_pwd }}"
+  register: cobbler_web_user_pwd_hash
+
+- name: template /etc/cobbler/users.digest
+  template: src=etc/cobbler/users.digest.j2 dest=/etc/cobbler/users.digest mode=644

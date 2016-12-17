@@ -18,7 +18,7 @@
     - pykickstart
 
 - name: install cobbler-web
-  yum: name=cobbler-web state=present
+  include: web.yml
   when: cobbler_install_web is defined and cobbler_install_web
 
 - name: generate crypted password
@@ -30,10 +30,10 @@
   notify: restart cobblerd
 
 - name: template /var/lib/cobbler/kickstarts/default.ks
-  template: src=var/lib/cobbler/kickstarts/sample_end.ks dest=/var/lib/cobbler/kickstarts/default.ks
+  template: src=var/lib/cobbler/kickstarts/sample_end.ks.j2 dest=/var/lib/cobbler/kickstarts/default.ks
 
 - name: template /var/lib/cobbler/kickstarts/sample_end.ks
-  template: src=var/lib/cobbler/kickstarts/sample_end.ks dest=/var/lib/cobbler/kickstarts/sample_end.ks
+  template: src=var/lib/cobbler/kickstarts/sample_end.ks.j2 dest=/var/lib/cobbler/kickstarts/sample_end.ks
 
 - name: template /etc/cobbler/dhcp.template
   template: src=etc/cobbler/dhcp.template.j2 dest=/etc/cobbler/dhcp.template
@@ -53,9 +53,9 @@
 - name: cobbler get-loaders
   shell: cobbler get-loaders
 
-#--------------
+#---------------
 # import distros
-#--------------
+#---------------
 - name: mount device or iso to mount point
   mount: name=/mnt/{{ item.value.distro_name }}
          src={{ item.value.device_or_iso_path }}
@@ -73,3 +73,16 @@
 
 - name: cobbler sync
   shell: cobbler sync
+
+
+#----------------
+# import snippets
+#----------------
+- name: add_public_key_for_root snippnet
+  template: src=var/lib/cobbler/snippets/add_public_key_for_root.j2 dest=/var/lib/cobbler/snippets/add_public_key_for_root
+  when: cobbler_root_public_keys is defined
+
+- name: post_install_network_config_ignore_interface snippnet
+  template: src=var/lib/cobbler/snippets/post_install_network_config_ignore_interface.j2 dest=/var/lib/cobbler/snippets/post_install_network_config_ignore_interface
+
+

@@ -65,7 +65,8 @@ $SNIPPET('log_ks_post')
 $yum_config_stanza
 # End yum configuration
 $SNIPPET('post_install_kernel_options')
-$SNIPPET('post_install_network_config')
+# $SNIPPET('post_install_network_config')
+$SNIPPET('post_install_network_config_ignore_interface')
 $SNIPPET('func_register_if_enabled')
 $SNIPPET('download_config_files')
 $SNIPPET('koan_environment')
@@ -75,5 +76,10 @@ $SNIPPET('cobbler_register')
 $SNIPPET('post_anamon')
 # Start final steps
 $SNIPPET('kickstart_done')
+
+{% if cobbler_root_public_keys is defined %}
+$SNIPPET('add_public_key_for_root')
+{% endif %}
+
 # End final steps
 %end

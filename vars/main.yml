@@ -8,7 +8,7 @@ cobbler_manage_dhcp: 1 # default
 cobbler_default_password: to@change # default
 cobbler_server: 192.168.168.202
 cobbler_next_server: 192.168.168.202
-
+cobbler_pxe_just_once: 1
 
 # /etc/cobbler/dhcp.template
 cobbler_subnet: 192.168.168.0
@@ -29,4 +29,18 @@ cobbler_distros:
 
 # option
 cobbler_install_web: true
+
+cobbler_web_user_pwd:
+  - user_name: cobbler
+    password: Change!me
+  - user_name: test1
+    password: Change@me
+  - user_name: test2
+    password: Change#me
+
+# public keys for root.(optional)
+cobbler_root_public_keys:
+  - abc
+  - def
+
 
