@@ -1,3 +1,7 @@
 ---
 # defaults file for cobbler
 
+use_centos7_1_customized: false
+
+
+

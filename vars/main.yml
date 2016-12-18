@@ -23,7 +23,7 @@ cobbler_subnet_mask: 255.255.255.0
 # option
 cobbler_distros:
   CentOS-7.1-minimal:
-    distro_name: CentOS-7.1
+    distro_name: CentOS-7.2
     device_or_iso_path: /dev/sr0  # /data/CentOS-7-x86_64-DVD-1503-01.iso
     arch: x86_64
 
@@ -40,7 +40,11 @@ cobbler_web_user_pwd:
 
 # public keys for root.(optional)
 cobbler_root_public_keys:
-  - abc
+  - sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJn8UojtIF/fHs6wKFEK38nuLKLh2WWcxGoLFu+Z+jyB197z/e9k8Y8fAX/rD0dZc3wOwGvGKylO5wTEtT+Zoo7EnDb52Y2odGX3suemRXqXPB/enW0FgEdSI8WA+lV80mdREQRP+tTtiGaOH8u4XpvkMj5rrGHgK2A+WYBIpOZ8kEqXp7rnYvtyyVtqg1zVeOGrBNmBejNm9JShsmiXJWknuENjuVFd3fJVvz335JcUCJBACM8HpdGhd+uiEIN2CYTBTT0vr6TW8SzmCb25n0KrEf2EDSoD6wgEjaTtLxXgd0ggMlzlOtxjx1xCuiIyq78wvQJf5yBWyznpdYtCaF dyc@dycs-MacBook-Pro.loca
   - def
+
+
+cobbler_use_centos7_1_customized: true
+cobbler_epel_too_slow: true
 
 

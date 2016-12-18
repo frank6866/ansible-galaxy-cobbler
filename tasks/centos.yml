@@ -7,8 +7,28 @@
 - name: "stop selinux"
   selinux: state=disabled
 
+#- name: uncomment baseurl in base
+#  lineinfile: dest=/etc/yum.repos.d/CentOS-Base.repo regexp="#baseurl=http\:\/\/mirror\.centos\.org\/centos\/\$releasever\/os\/\$basearch\/$"
+#              line="baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/"
+#  when: cobbler_epel_too_slow is defined and cobbler_epel_too_slow
+#
+#- name: comment mirrorlist in base
+#  lineinfile: dest=/etc/yum.repos.d/CentOS-Base.repo regexp="mirrorlist=http\:\/\/mirrorlist\.centos\.org\/\?release=\$releasever\&arch=\$basearch\&repo=os\&infra=\$infra$"
+#              line="#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os&infra=$infra"
+#  when: cobbler_epel_too_slow is defined and cobbler_epel_too_slow
+
 - name: install epel repo
   yum: name=epel-release state=present
+
+- name: uncomment baseurl in epel
+  lineinfile: dest=/etc/yum.repos.d/epel.repo regexp="#baseurl=http\:\/\/download\.fedoraproject\.org\/pub\/epel\/7\/\$basearch$"
+              line="baseurl=http://download.fedoraproject.org/pub/epel/7/$basearch"
+  when: cobbler_epel_too_slow is defined and cobbler_epel_too_slow
+
+- name: comment mirrorlist in epel
+  lineinfile: dest=/etc/yum.repos.d/epel.repo regexp="mirrorlist=https\:\/\/mirrors\.fedoraproject\.org\/metalink\?repo=epel-7\&arch=\$basearch$"
+              line="#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch"
+  when: cobbler_epel_too_slow is defined and cobbler_epel_too_slow
 
 - name: install related packages
   yum: name={{ item }} state=present
@@ -29,18 +49,29 @@
   template: src=etc/cobbler/settings.j2 dest=/etc/cobbler/settings
   notify: restart cobblerd
 
-- name: template /var/lib/cobbler/kickstarts/default.ks
-  template: src=var/lib/cobbler/kickstarts/sample_end.ks.j2 dest=/var/lib/cobbler/kickstarts/default.ks
-
-- name: template /var/lib/cobbler/kickstarts/sample_end.ks
-  template: src=var/lib/cobbler/kickstarts/sample_end.ks.j2 dest=/var/lib/cobbler/kickstarts/sample_end.ks
-
 - name: template /etc/cobbler/dhcp.template
   template: src=etc/cobbler/dhcp.template.j2 dest=/etc/cobbler/dhcp.template
 
 - name: change 'disable' to 'no' in /etc/xinetd.d/tftp
   lineinfile: dest=/etc/xinetd.d/tftp regexp="disable" line="disable = no"
-  # notify: restart xinetd
+
+#----------------
+# begin add snippets and kickstarts
+#----------------
+- name: add_public_key_for_root snippnet
+  template: src=var/lib/cobbler/snippets/add_public_key_for_root.j2
+            dest=/var/lib/cobbler/snippets/add_public_key_for_root
+  when: cobbler_root_public_keys is defined
+
+- name: post_install_network_config_ignore_interface snippnet
+  template: src=var/lib/cobbler/snippets/post_install_network_config_ignore_interface.j2
+            dest=/var/lib/cobbler/snippets/post_install_network_config_ignore_interface
+
+- name: template /var/lib/cobbler/kickstarts/default.ks
+  template: src=var/lib/cobbler/kickstarts/centos7.1-customized.j2
+            dest=/var/lib/cobbler/kickstarts/centos7.1-customized
+
+# end add snippets and kickstarts
 
 - name: start and enable service
   service: name={{ item }} state=started enabled=yes
@@ -67,22 +98,11 @@
   shell: cobbler import --name={{ item.value.distro_name }}
          --arch={{ item.value.arch }}
          --path=/mnt/{{ item.value.distro_name }}
+         --kickstart=/var/lib/cobbler/kickstarts/centos7.1-customized
   when: cobbler_distros is defined
   with_dict: "{{ cobbler_distros | default({})}}"
   ignore_errors: true
 
 - name: cobbler sync
   shell: cobbler sync
-
-
-#----------------
-# import snippets
-#----------------
-- name: add_public_key_for_root snippnet
-  template: src=var/lib/cobbler/snippets/add_public_key_for_root.j2 dest=/var/lib/cobbler/snippets/add_public_key_for_root
-  when: cobbler_root_public_keys is defined
-
-- name: post_install_network_config_ignore_interface snippnet
-  template: src=var/lib/cobbler/snippets/post_install_network_config_ignore_interface.j2 dest=/var/lib/cobbler/snippets/post_install_network_config_ignore_interface
-
 
