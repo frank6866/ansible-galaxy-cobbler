@@ -68,8 +68,8 @@
             dest=/var/lib/cobbler/snippets/post_install_network_config_ignore_interface
 
 - name: template /var/lib/cobbler/kickstarts/default.ks
-  template: src=var/lib/cobbler/kickstarts/centos7.1-customized.j2
-            dest=/var/lib/cobbler/kickstarts/centos7.1-customized
+  template: src=var/lib/cobbler/kickstarts/centos7-customized.j2
+            dest=/var/lib/cobbler/kickstarts/centos7-customized
 
 # end add snippets and kickstarts
 
@@ -98,7 +98,7 @@
   shell: cobbler import --name={{ item.value.distro_name }}
          --arch={{ item.value.arch }}
          --path=/mnt/{{ item.value.distro_name }}
-         --kickstart=/var/lib/cobbler/kickstarts/centos7.1-customized
+         --kickstart=/var/lib/cobbler/kickstarts/centos7-customized
   when: cobbler_distros is defined
   with_dict: "{{ cobbler_distros | default({})}}"
   ignore_errors: true
