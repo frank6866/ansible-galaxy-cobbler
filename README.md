@@ -37,7 +37,6 @@ cobbler_subnet: 192.168.168.0
 cobbler_netmask: 255.255.255.0
 cobbler_dynamic_bootp_start: 192.168.168.128
 cobbler_dynamic_bootp_end: 192.168.168.172
-
 ```
 
 
