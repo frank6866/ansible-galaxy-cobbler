@@ -1,50 +1,53 @@
 ---
 # vars file for cobbler
 
-cobbler_default_time_zone: "Asia/Shanghai"   # America/New_York
 
-# /etc/cobbler/settings
+
+use_centos7_customized: false
+cobbler_epel_too_slow: true
+
+
+cobbler_default_time_zone: "Asia/Shanghai"   # America/New_York
 cobbler_manage_dhcp: 1 # default
-cobbler_default_password: to@change # default
-cobbler_server: 192.168.168.202
-cobbler_next_server: 192.168.168.202
 cobbler_pxe_just_once: 1
 
-# /etc/cobbler/dhcp.template
-cobbler_subnet: 192.168.168.0
-cobbler_netmask: 255.255.255.0
-cobbler_dynamic_bootp_start: 192.168.168.128
-cobbler_dynamic_bootp_end: 192.168.168.172
 
-cobbler_routers: 192.168.168.1
-cobbler_domain_name_servers: 192.168.168.1
-cobbler_subnet_mask: 255.255.255.0
+# optional
+# cobbler_routers: 192.168.168.1
+# cobbler_domain_name_servers: 192.168.168.1
+# cobbler_subnet_mask: 255.255.255.0
 
-# option
-cobbler_distros:
-  CentOS-7.1-minimal:
-    distro_name: CentOS-7.2
-    device_or_iso_path: /dev/sr0  # /data/CentOS-7-x86_64-DVD-1503-01.iso
-    arch: x86_64
+#cobbler_distros:
+#  CentOS-7.1-minimal:
+#    distro_name: CentOS-7.2
+#    device_or_iso_path: /dev/sr0  # /data/CentOS-7-x86_64-DVD-1503-01.iso
+#    arch: x86_64
 
 # option
-cobbler_install_web: true
-
-cobbler_web_user_pwd:
-  - user_name: cobbler
-    password: Change!me
-  - user_name: test1
-    password: Change@me
-  - user_name: test2
-    password: Change#me
+# cobbler_install_web: true
+#
+# cobbler_web_user_pwd:
+#  - user_name: cobbler
+#    password: Change!me
+#  - user_name: test1
+#    password: Change@me
+#  - user_name: test2
+#    password: Change#me
 
 # public keys for root.(optional)
-cobbler_root_public_keys:
-  - sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJn8UojtIF/fHs6wKFEK38nuLKLh2WWcxGoLFu+Z+jyB197z/e9k8Y8fAX/rD0dZc3wOwGvGKylO5wTEtT+Zoo7EnDb52Y2odGX3suemRXqXPB/enW0FgEdSI8WA+lV80mdREQRP+tTtiGaOH8u4XpvkMj5rrGHgK2A+WYBIpOZ8kEqXp7rnYvtyyVtqg1zVeOGrBNmBejNm9JShsmiXJWknuENjuVFd3fJVvz335JcUCJBACM8HpdGhd+uiEIN2CYTBTT0vr6TW8SzmCb25n0KrEf2EDSoD6wgEjaTtLxXgd0ggMlzlOtxjx1xCuiIyq78wvQJf5yBWyznpdYtCaF dyc@dycs-MacBook-Pro.loca
-  - def
+# cobbler_root_public_keys:
+#  - sh-rsa abcdef
 
 
-cobbler_use_centos7_1_customized: true
-cobbler_epel_too_slow: true
+
+### required and must be set vars:
+# cobbler_default_password: to@change
+# cobbler_server: 192.168.168.202
+# cobbler_next_server: 192.168.168.202
+# cobbler_subnet: 192.168.168.0
+# cobbler_netmask: 255.255.255.0
+# cobbler_dynamic_bootp_start: 192.168.168.128
+# cobbler_dynamic_bootp_end: 192.168.168.172
+
 
 
