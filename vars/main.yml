@@ -18,12 +18,12 @@ cobbler_pxe_just_once: 1
 # cobbler_subnet_mask: 255.255.255.0
 
 #cobbler_distros:
-#  CentOS-7.1-minimal:
-#    distro_name: CentOS-7.2
-#    device_or_iso_path: /dev/sr0  # /data/CentOS-7-x86_64-DVD-1503-01.iso
+#cobbler_distros:
+#  - distro_name: CentOS-7.1
+#    device_or_iso_path: /dev/sr0
 #    arch: x86_64
 
-# option
+# optional
 # cobbler_install_web: true
 #
 # cobbler_web_user_pwd:
@@ -40,7 +40,7 @@ cobbler_pxe_just_once: 1
 
 
 
-### required and must be set vars:
+### vars that required and must be set:
 # cobbler_default_password: to@change
 # cobbler_server: 192.168.168.202
 # cobbler_next_server: 192.168.168.202

@@ -7,6 +7,9 @@
 - name: "stop selinux"
   selinux: state=disabled
 
+- name: stop and disable firewalld
+  service: name=firewalld state=stopped enabled=no
+
 #- name: uncomment baseurl in base
 #  lineinfile: dest=/etc/yum.repos.d/CentOS-Base.repo regexp="#baseurl=http\:\/\/mirror\.centos\.org\/centos\/\$releasever\/os\/\$basearch\/$"
 #              line="baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/"
@@ -88,19 +91,19 @@
 # import distros
 #---------------
 - name: mount device or iso to mount point
-  mount: name=/mnt/{{ item.value.distro_name }}
-         src={{ item.value.device_or_iso_path }}
+  mount: name=/mnt/{{ item.distro_name }}
+         src={{ item.device_or_iso_path }}
          opts=ro fstype=iso9660 state=mounted
-  with_dict: "{{ cobbler_distros | default({})}}"
+  with_items: "{{ cobbler_distros | default([])}}"
   when: cobbler_distros is defined
 
 - name: import to distro to cobbler
-  shell: cobbler import --name={{ item.value.distro_name }}
-         --arch={{ item.value.arch }}
-         --path=/mnt/{{ item.value.distro_name }}
+  shell: cobbler import --name={{ item.distro_name }}
+         --arch={{ item.arch }}
+         --path=/mnt/{{ item.distro_name }}
          --kickstart=/var/lib/cobbler/kickstarts/centos7-customized
   when: cobbler_distros is defined
-  with_dict: "{{ cobbler_distros | default({})}}"
+  with_items: "{{ cobbler_distros | default([])}}"
   ignore_errors: true
 
 - name: cobbler sync
