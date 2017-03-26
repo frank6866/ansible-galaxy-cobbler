@@ -10,28 +10,8 @@
 - name: stop and disable firewalld
   service: name=firewalld state=stopped enabled=no
 
-#- name: uncomment baseurl in base
-#  lineinfile: dest=/etc/yum.repos.d/CentOS-Base.repo regexp="#baseurl=http\:\/\/mirror\.centos\.org\/centos\/\$releasever\/os\/\$basearch\/$"
-#              line="baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/"
-#  when: cobbler_epel_too_slow is defined and cobbler_epel_too_slow
-#
-#- name: comment mirrorlist in base
-#  lineinfile: dest=/etc/yum.repos.d/CentOS-Base.repo regexp="mirrorlist=http\:\/\/mirrorlist\.centos\.org\/\?release=\$releasever\&arch=\$basearch\&repo=os\&infra=\$infra$"
-#              line="#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os&infra=$infra"
-#  when: cobbler_epel_too_slow is defined and cobbler_epel_too_slow
-
 - name: install epel repo
   yum: name=epel-release state=present
-
-- name: uncomment baseurl in epel
-  lineinfile: dest=/etc/yum.repos.d/epel.repo regexp="#baseurl=http\:\/\/download\.fedoraproject\.org\/pub\/epel\/7\/\$basearch$"
-              line="baseurl=http://download.fedoraproject.org/pub/epel/7/$basearch"
-  when: cobbler_epel_too_slow is defined and cobbler_epel_too_slow
-
-- name: comment mirrorlist in epel
-  lineinfile: dest=/etc/yum.repos.d/epel.repo regexp="mirrorlist=https\:\/\/mirrors\.fedoraproject\.org\/metalink\?repo=epel-7\&arch=\$basearch$"
-              line="#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch"
-  when: cobbler_epel_too_slow is defined and cobbler_epel_too_slow
 
 - name: install related packages
   yum: name={{ item }} state=present
@@ -40,23 +20,20 @@
     - dhcp
     - pykickstart
 
-- name: install cobbler-web
-  include: web.yml
-  when: cobbler_install_web is defined and cobbler_install_web
 
 - name: generate crypted password
   shell: openssl passwd -1 {{ cobbler_default_password }}
   register: cobbler_default_password_crypted
 
 - name: template /etc/cobbler/settings
-  template: src=etc/cobbler/settings.j2 dest=/etc/cobbler/settings
+  template: src=etc/cobbler/settings.j2 dest=/etc/cobbler/settings backup=yes
   notify: restart cobblerd
 
 - name: template /etc/cobbler/dhcp.template
-  template: src=etc/cobbler/dhcp.template.j2 dest=/etc/cobbler/dhcp.template
+  template: src=etc/cobbler/dhcp.template.j2 dest=/etc/cobbler/dhcp.template backup=yes
 
 - name: change 'disable' to 'no' in /etc/xinetd.d/tftp
-  lineinfile: dest=/etc/xinetd.d/tftp regexp="disable" line="disable = no"
+  lineinfile: dest=/etc/xinetd.d/tftp regexp="disable" line="disable = no" backup=yes
 
 #----------------
 # begin add snippets and kickstarts
@@ -64,15 +41,24 @@
 - name: add_public_key_for_root snippnet
   template: src=var/lib/cobbler/snippets/add_public_key_for_root.j2
             dest=/var/lib/cobbler/snippets/add_public_key_for_root
+            backup=yes
   when: cobbler_root_public_keys is defined
 
 - name: post_install_network_config_ignore_interface snippnet
   template: src=var/lib/cobbler/snippets/post_install_network_config_ignore_interface.j2
             dest=/var/lib/cobbler/snippets/post_install_network_config_ignore_interface
+            backup=yes
 
-- name: template /var/lib/cobbler/kickstarts/default.ks
-  template: src=var/lib/cobbler/kickstarts/centos7-customized.j2
-            dest=/var/lib/cobbler/kickstarts/centos7-customized
+- name: /var/lib/cobbler/kickstarts/centos7-customized-sda
+  template: src=var/lib/cobbler/kickstarts/centos7-customized-sda.j2
+            dest=/var/lib/cobbler/kickstarts/centos7-customized-sda
+            backup=yes
+
+- name: /var/lib/cobbler/kickstarts/centos7-customized-vda
+  template: src=var/lib/cobbler/kickstarts/centos7-customized-vda.j2
+            dest=/var/lib/cobbler/kickstarts/centos7-customized-vda
+            backup=yes
+
 
 # end add snippets and kickstarts
 
@@ -101,11 +87,20 @@
   shell: cobbler import --name={{ item.distro_name }}
          --arch={{ item.arch }}
          --path=/mnt/{{ item.distro_name }}
-         --kickstart=/var/lib/cobbler/kickstarts/centos7-customized
+         --kickstart=/var/lib/cobbler/kickstarts/{{ item.kickstart_file_name }}
   when: cobbler_distros is defined
   with_items: "{{ cobbler_distros | default([])}}"
   ignore_errors: true
 
 - name: cobbler sync
   shell: cobbler sync
+
+
+# cobbler-web
+- name: install cobbler-web
+  include: web.yml
+  when: cobbler_install_web is defined and cobbler_install_web
+
+
+
 

@@ -5,6 +5,54 @@ Install cobbler.
 
 Role Variables
 --------------
+
+
+
+```
+---
+
+### cobbler server
+cobbler_default_password: changE_me
+cobbler_default_time_zone: "Asia/Shanghai"   # America/New_York
+cobbler_manage_dhcp: 1 # default
+cobbler_pxe_just_once: 1
+cobbler_server: 192.168.168.200
+cobbler_next_server: 192.168.168.200
+cobbler_subnet: 192.168.168.0
+cobbler_netmask: 255.255.255.0
+cobbler_dynamic_bootp_start: 192.168.168.128
+cobbler_dynamic_bootp_end: 192.168.168.172
+cobbler_routers: 192.168.168.1
+cobbler_domain_name_servers: 192.168.168.1
+cobbler_subnet_mask: 255.255.255.0
+
+
+# cobbler web
+cobbler_install_web: true
+cobbler_web_user_pwd:
+ - user_name: cobbler
+   password: Change!me
+ - user_name: test1
+   password: Change@me
+
+
+# import distros
+cobbler_distros:
+  - distro_name: CentOS-7.1-sda
+    device_or_iso_path: /dev/sr0
+    arch: x86_64
+    kickstart_file_name: centos7-customized-sda
+
+# public keys for root.(optional)
+cobbler_root_public_keys:
+  - xxxxxxxx
+
+
+```
+
+
+
+
 ## Required variables
 
 You must at least set the following variables for each hosts:
@@ -26,7 +74,7 @@ The example of inventory file is:
 vagrant1
 ```
 
-The example of host_vars/vagrant1 file is:  
+The example of host_vars/vagrant1 file is:
 
 ```
 ---
@@ -88,6 +136,12 @@ Example Playbook
   roles:
   - frank6866.cobbler
 ```
+
+Test
+-----
+> $ sudo cobbler system add --name=pxe-test --profile=CentOS-7.1-sda-x86_64 --hostname=hn-pxe-test --mac=08:00:27:95:9F:2B --ip-address=192.168.168.199 --subnet=255.255.255.0 --gateway=192.168.168.1 --static=1 --interface=not_used
+
+
 
 License
 -------

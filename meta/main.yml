@@ -205,7 +205,7 @@ galaxy_info:
   #  - all
   #  - Any
 
-  galaxy_tags:
+  galaxy_tags: cobbler
 
     # List tags for your role here, one per line. A tag is
     # a keyword that describes and categorizes the role.

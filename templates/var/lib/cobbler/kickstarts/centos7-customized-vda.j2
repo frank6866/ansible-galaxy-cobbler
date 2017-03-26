@@ -14,16 +14,17 @@ auth  --useshadow  --enablemd5
 bootloader --location=mbr
 # Partition clearing information
 clearpart --all --initlabel
+ignoredisk --only-use=vda
 # Use text mode install
 text
 # Firewall configuration
-firewall --enabled
+firewall --disable
 # Run the Setup Agent on first boot
 firstboot --disable
 # System keyboard
 keyboard us
 # System language
-lang en_US
+lang en_US.UTF-8
 # Use network installation
 url --url=$tree
 # If any cobbler repo definitions were referenced in the kickstart profile, include them here.
@@ -46,7 +47,12 @@ install
 # Clear the Master Boot Record
 zerombr
 # Allow anaconda to partition the system as needed
-autopart
+#autopart
+part / --fstype ext4 --size 30000
+part /data --fstype ext4 --size 1 --grow
+part /boot --fstype ext4 --size 500
+part swap --size 16000
+part biosboot --fstype=biosboot --size=1
 
 %pre
 $SNIPPET('log_ks_pre')
@@ -81,9 +87,7 @@ $SNIPPET('post_anamon')
 # Start final steps
 $SNIPPET('kickstart_done')
 
-{% if cobbler_root_public_keys is defined %}
 $SNIPPET('add_public_key_for_root')
-{% endif %}
 
 # End final steps
 %end

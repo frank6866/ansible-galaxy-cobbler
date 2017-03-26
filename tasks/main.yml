@@ -1,10 +1,9 @@
 ---
 # tasks file for cobbler
 
-- name: install and config cobbler on CentOS/RHEL
-  include: centos.yml
-  when: ansible_os_family == "RedHat" or ansible_os_family == "CentOS"
+- name: "fail if Operating System is not CentOS-7.x"
+  fail: msg="Operating System {{ ansible_distribution }}-{{ ansible_distribution_version }} not supported"
+  when: ansible_distribution != "CentOS" or ansible_distribution_major_version != "7"
 
-- name: install and config cobbler on
-  include: ubuntu.yml
-  when: ansible_os_family == "Debian"
+- name: install cobbler on CentOS
+  include: centos.yml

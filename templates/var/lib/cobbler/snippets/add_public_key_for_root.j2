@@ -2,7 +2,7 @@
 # Start post_add_public_key_for_root generated code
 mkdir --mode=700 /root/.ssh
 {% for public_key in cobbler_root_public_keys %}
-echo {{ public_key }} >> /root/.ssh/authorized_key
+echo {{ public_key }} >> /root/.ssh/authorized_keys
 {% endfor %}
 chmod 600 /root/.ssh/authorized_keys
 # end "Add public key for root"
