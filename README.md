@@ -1,7 +1,7 @@
 Cobbler
 =======
 
-Install cobbler.
+This role is used to deploy cobbler.
 
 Role Variables
 --------------

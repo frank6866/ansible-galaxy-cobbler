@@ -3,7 +3,7 @@
 
 - name: "fail if Operating System is not CentOS-7.x"
   fail: msg="Operating System {{ ansible_distribution }}-{{ ansible_distribution_version }} not supported"
-  when: ansible_distribution != "CentOS" or ansible_distribution_major_version != "7"
+  when: (ansible_distribution != "CentOS" and ansible_distribution != "RedHat") or ansible_distribution_major_version != "7"
 
 - name: install cobbler on CentOS
   include: centos.yml
