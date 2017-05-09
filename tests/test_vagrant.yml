@@ -1,5 +1,0 @@
----
-- hosts: cobbler
-  become: true
-  roles:
-    - ../..
