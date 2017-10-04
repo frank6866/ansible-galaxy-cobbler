@@ -15,6 +15,10 @@ cobbler_dynamic_bootp_end: 192.168.168.172
 cobbler_routers: 192.168.168.1
 cobbler_domain_name_servers: 192.168.168.1
 cobbler_subnet_mask: 255.255.255.0
+# If cobbler is behind a proxy for  download from internet , the http_proxy settings in environment doesn't help
+# to complete the installation . It fails during "cobbler get-loaders " tasks . Proxy has to be explicitly 
+#mentioned in the /etc/cobbler/settings file . Hence modified the template and inserting this additional var 
+ext_proxy_for_cobbler: http://10.0.0.14:3128 
 
 
 
