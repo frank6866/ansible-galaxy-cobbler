@@ -121,7 +121,7 @@ cobbler_distros:
 
 # install cobbler web ui
 cobbler_install_web: true
- cobbler_web_user_pwd:
+cobbler_web_user_pwd:
   - user_name: cobbler
     password: Change!me
 ```
