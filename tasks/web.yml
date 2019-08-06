@@ -15,6 +15,7 @@
   shell: echo -n "{{ item.user_name }}:Cobbler:" && echo -n "{{ item.user_name }}:Cobbler:{{ item.password }}" | md5sum | awk '{print $1}'
   with_items: "{{ cobbler_web_user_pwd | default([]) }}"
   register: cobbler_web_user_pwd_hash
+  no_log: true
 
 - name: template /etc/cobbler/users.digest
   template: src=etc/cobbler/users.digest.j2 dest=/etc/cobbler/users.digest mode=644
