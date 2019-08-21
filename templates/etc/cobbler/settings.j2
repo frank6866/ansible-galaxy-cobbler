@@ -455,8 +455,11 @@ always_write_dhcp_entries: 0
 
 # external proxy - used by: get-loaders, reposync, signature update
 # eg: proxy_url_ext: "http://192.168.1.1:8080"
+{% if ext_proxy_for_cobbler is defined %}
+proxy_url_ext: {{ ext_proxy_for_cobbler }}
+{% else %}
 proxy_url_ext: ""
-
+{% endif %}
 # internal proxy - used by systems to reach cobbler for kickstarts
 # eg: proxy_url_int: "http://10.0.0.1:8080"
 proxy_url_int: ""
